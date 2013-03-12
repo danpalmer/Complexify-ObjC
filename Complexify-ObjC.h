@@ -11,6 +11,6 @@
 
 @interface Complexify : NSObject
 
--(void)checkComplexityOfPassword:(NSString *)password completionHandler:(void(^)(BOOL valid, CGFloat complexity))completionHandler;
++ (void)checkComplexityOfPassword:(NSString *)password completionHandler:(void(^)(BOOL valid, CGFloat complexity))completionHandler;
 
 @end

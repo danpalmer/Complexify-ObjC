@@ -22,7 +22,7 @@ static NSInteger kStrengthScaleFactor = 1;
 @implementation Complexify
 
 #pragma mark - Lifecycle
-+(void)initialize {
++ (void)initialize {
     if (self == [Complexify class]) {
         charsetsArray = @[
                           // Commonly Used
@@ -130,7 +130,8 @@ static NSInteger kStrengthScaleFactor = 1;
 }
 
 #pragma mark - Public Methods
--(void)checkComplexityOfPassword:(NSString *)password completionHandler:(void (^)(BOOL, CGFloat))completionHandler {
+
++ (void)checkComplexityOfPassword:(NSString *)password completionHandler:(void (^)(BOOL, CGFloat))completionHandler {
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
         BOOL inBanlist = NO;
         
@@ -171,11 +172,12 @@ static NSInteger kStrengthScaleFactor = 1;
 
 #pragma mark - Internal methods
 
--(NSInteger)additionalComplexityForString:(NSString *)string charset:(NSArray *)charset {
++ (NSInteger)additionalComplexityForString:(NSString *)string charset:(NSArray *)charset {
     for (NSInteger i = string.length - 1; i >= 0; i--) {
         if ([charset[0] integerValue] <= [string characterAtIndex:i] && [string characterAtIndex:i] <= [charset[1] integerValue]) {
             return [charset[1] integerValue] - [charset[0] integerValue] + 1;
         };
     }; return 0;
 }
+
 @end
