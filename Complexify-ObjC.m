@@ -130,10 +130,8 @@ static NSInteger kStrengthScaleFactor = 1;
 
 #pragma mark - Public Methods
 
-+ (void)checkComplexityOfPassword:(NSString *)password completionHandler:(void (^)(BOOL, CGFloat))completionHandler {
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-
-        CGFloat complexity = 0;
++ (void)checkComplexityOfPassword:(NSString *)password completionHandler:(ComplexifyCallback)completionHandler {
+        double complexity = 0;
         
         if (![commonPasswordsArray containsObject:password]) {
             for (NSInteger i = NUMBER_OF_CHARSETS - 1; i >= 0; i--) {
@@ -148,13 +146,18 @@ static NSInteger kStrengthScaleFactor = 1;
         complexity = (complexity > 100) ? 100 : complexity;
         
         BOOL valid = (complexity > kMinComplexity && password.length >= kMinimumChars);
-        
-        dispatch_async(dispatch_get_main_queue(), ^{
-            completionHandler(valid, complexity); 
-        });
-        
-        return;
-    });
+    
+        completionHandler(valid, complexity);
+}
+
++ (void)checkComplexityInBackgroundOfPassword:(NSString *)password completionHandler:(ComplexifyCallback)completionHandler {
+	dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+		[self checkComplexityOfPassword:password completionHandler:^(BOOL valid, double complexity) {
+			dispatch_async(dispatch_get_main_queue(), ^{
+				completionHandler(valid, complexity);
+			});
+		}];
+	});
 }
 
 #pragma mark - Internal methods
